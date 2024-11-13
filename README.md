@@ -1,102 +1,102 @@
-# tkv-format TKV Time Key Value
+# TKV Time Key Value -> tkv-format
 
 ## Description
 
-**TKV Time Key Value** est un format de données simplifié pour stocker des séries temporelles de capteurs avec des valeurs associées. Chaque ligne représente un enregistrement de timestamp avec fuseau horaire, suivi de paires `clé:valeur` pour chaque capteur. Ce format est facile à lire, compact, et adapté pour des applications qui nécessitent des enregistrements de capteurs structurés et datés.
+**TKV Time Key Value** is a simplified data format for storing time-series sensor data with associated values. Each line represents a timestamped record with timezone information, followed by `key:value` pairs for each sensor. This format is easy to read, compact, and suited for applications that require structured and timestamped sensor records.
 
-## Format des données
+## Data Format
 
-Chaque enregistrement est constitué d'un timestamp avec fuseau horaire suivi de paires `clé:valeur` pour chaque capteur. Le format général est le suivant :
+Each record consists of a timestamp with timezone information, followed by `key:value` pairs for each sensor. The general format is as follows:
 
 ```
-timestamp ; capteur1:valeur1 ; capteur2:valeur2 ; ...
+timestamp ; sensor1:value1 ; sensor2:value2 ; ...
 ```
 
-Le format de timestamp recommandé est conforme à la norme **ISO 8601**, incluant le fuseau horaire, comme suit :
+The recommended timestamp format follows the **ISO 8601** standard, including the timezone, as shown:
 
 ```
 YYYY-MM-DDTHH:MM:SS±HH:MM
 ```
 
-### Exemple
+### Example
 
 ```
-2024-11-12T14:32:45+01:00 ; temperature:22.5 ; humidity:45.0 ; pressure:1013
+2024-11-12T14:32:45+01:00;temperature:22.5;humidity:45.0;pressure:1013
 ```
 
-Dans cet exemple :
-- `timestamp` est l'heure de l'enregistrement avec fuseau horaire (ici, `+01:00`).
-- `temperature`, `humidity`, et `pressure` sont des clés représentant différents capteurs.
-- `22.5`, `45.0`, et `1013` sont les valeurs associées à chaque capteur au moment de cet enregistrement.
+In this example:
+- `timestamp` is the recording time with timezone (here, `+01:00`).
+- `temperature`, `humidity`, and `pressure` are keys representing different sensors.
+- `22.5`, `45.0`, and `1013` are values associated with each sensor at the time of recording.
 
-## Structure du Projet
+## Project Structure
 
 ```
 - TKV/
-    - data/               # Dossier pour les fichiers de données au format TKV
-    - src/                # Code source du projet
-        - parser.py       # Script pour lire et analyser les fichiers TKV
-        - writer.py       # Script pour générer et écrire des fichiers TKV
-    - README.md           # Documentation du projet
-    - requirements.txt    # Dépendances Python
+    - data/               # Folder for TKV data files
+    - src/                # Project source code
+        - parser.py       # Script to read and parse TKV files
+        - writer.py       # Script to generate and write TKV files
+    - README.md           # Project documentation
+    - requirements.txt    # Python dependencies
 ```
 
 ## Installation
 
-Assurez-vous d’avoir **Python 3.8** ou une version ultérieure. Pour installer les dépendances :
+Ensure you have **Python 3.8** or later. To install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Utilisation
+## Usage
 
-### Parsing d’un fichier TKV
+### Parsing a TKV File
 
-Le script `parser.py` permet de lire un fichier TKV et de charger les données dans une structure Python.
+The `parser.py` script reads a TKV file and loads the data into a Python structure.
 
-Exemple d'utilisation :
+Example usage:
 
 ```python
 from src.parser import parse_tkv
 
-data = parse_tkv("data/fichier.tkv")
+data = read_tkv("data/file.tkv")
 print(data)
 ```
 
-### Création d’un fichier TKV
+### Creating a TKV File
 
-Le script `writer.py` permet de créer un nouveau fichier TKV à partir de données sous forme de dictionnaire.
+The `writer.py` script allows you to create a new TKV file from data in dictionary format.
 
-Exemple d'utilisation :
+Example usage:
 
 ```python
 from src.writer import write_tkv
 
 data = [
-    {"timestamp": "2024-11-12T14:32:45+01:00", "temperature": 22.5, "humidity": 45.0, "pressure": 1013},
-    {"timestamp": "2024-11-12T14:33:00+01:00", "temperature": 22.4, "humidity": 44.8, "pressure": 1012},
+    {"timestamp": "2024-11-12T14:32:45+01:00","temperature": 22.5,"humidity" :45.0, "pressure": 1013},
+    {"timestamp": "2024-11-12T14:33:00+01:00","temperature": 22.4,"humidity" :44.8, "pressure": 1012},
 ]
 
-write_tkv("data/nouveau_fichier.tkv", data)
+write_tkv("data/new_file.tkv", data)
 ```
 
 ## Contribution
 
-1. Fork le projet.
-2. Créez une branche pour votre fonctionnalité (`git checkout -b feature/ma-fonctionnalité`).
-3. Committez vos modifications (`git commit -m 'Ajouter ma fonctionnalité'`).
-4. Pushez vers la branche (`git push origin feature/ma-fonctionnalité`).
-5. Créez une Pull Request.
+1. Fork the project.
+2. Create a branch for your feature (`git checkout -b feature/my-feature`).
+3. Commit your changes (`git commit -m 'Add my feature'`).
+4. Push to the branch (`git push origin feature/my-feature`).
+5. Create a Pull Request.
 
-## Licence
+## License
 
-Ce projet est sous licence MIT. Consultez le fichier [LICENSE](LICENSE) pour plus d'informations.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Auteurs
+## Authors
 
-- **Votre Nom** - Créateur du projet
+- **Julien Baudry** - Project Creator
 
---- 
+---
 
-Ce fichier est structuré en Markdown pour une meilleure lisibilité sur GitHub et autres plateformes.
+This README is structured in Markdown for improved readability on GitHub and other platforms.
