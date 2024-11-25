@@ -33,12 +33,10 @@ In this example:
 
 ```
 - TKV/
-    - data/               # Folder for TKV data files
     - src/                # Project source code
         - parser.py       # Script to read and parse TKV files
         - writer.py       # Script to generate and write TKV files
     - README.md           # Project documentation
-    - requirements.txt    # Python dependencies
 ```
 
 ## Installation
@@ -60,7 +58,7 @@ Example usage:
 ```python
 from src.parser import parse_tkv
 
-data = read_tkv("data/file.tkv")
+data = read_tkv("yourfile.tkv")
 print(data)
 ```
 
