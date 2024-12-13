@@ -1,6 +1,27 @@
 import datetime
 import pandas as pd
 
+def is_valid_timestamp(timestamp_str):
+    """Check if a timestamp string is in ISO 8601 format."""
+    try:
+        return datetime.datetime.fromisoformat(timestamp_str)
+    except ValueError:
+        return None
+
+
+def parse_sensor_data(sensor_data):
+    """Parse sensor data in the format 'sensor:value'."""
+    try:
+        key, value = sensor_data.split(":")
+        # Try to convert value to float
+        try:
+            value = float(value)
+        except ValueError:
+            pass  # Keep as string if conversion fails
+        return key, value
+    except ValueError:
+        return None, None
+
 
 def read_tkv(file_path):
     """
@@ -15,43 +36,43 @@ def read_tkv(file_path):
     """
     data = []
 
+    def process_line(line):
+        """Process a single line and return a dictionary or None if invalid."""
+        parts = line.strip().split(" ; ")
+
+        # Ensure the line has at least a timestamp and one sensor:value pair
+        if len(parts) < 2:
+            return None
+
+        # Validate timestamp
+        timestamp_str = parts[0]
+        timestamp = is_valid_timestamp(timestamp_str)
+        if not timestamp:
+            return None
+
+        # Initialize a dictionary for this line with the timestamp
+        entry = {"timestamp": timestamp}
+
+        # Parse sensor data
+        if not parse_sensor_entries(parts[1:], entry):
+            return None
+
+        return entry
+
+    def parse_sensor_entries(sensor_parts, entry):
+        """Parse multiple sensor data entries and update the entry dictionary."""
+        for sensor_data in sensor_parts:
+            key, value = parse_sensor_data(sensor_data)
+            if key is None or value is None:
+                return False  # Invalid sensor data
+            entry[key] = value
+        return True
+
     with open(file_path, 'r') as file:
         for line in file:
-            # Remove any extra whitespace and split the line by " ; "
-            parts = line.strip().split(" ; ")
-
-            # First part is the timestamp
-            timestamp_str = parts[0]
-            try:
-                timestamp = datetime.datetime.fromisoformat(timestamp_str)
-            except ValueError:
-                raise ValueError(f"Invalid timestamp format: {timestamp_str}")
-
-            # Initialize a dictionary for this line with the timestamp
-            entry = {"timestamp": timestamp}
-
-            # Parse each sensor:value pair
-            for sensor_data in parts[1:]:
-                # Split each sensor data into key and value
-                try:
-                    key, value = sensor_data.split(":")
-
-                    # Try to convert the value to float, if possible
-                    try:
-                        # Try converting to float if the value looks like a number
-                        value = float(value)
-                    except ValueError:
-                        # If it's not a number, leave the value as a string
-                        pass
-
-                    # Add the key and value to the entry dictionary
-                    entry[key] = value
-
-                except ValueError:
-                    raise ValueError(f"Invalid sensor data format: {sensor_data}")
-
-            # Append the entry dictionary to the data list
-            data.append(entry)
+            entry = process_line(line)
+            if entry:
+                data.append(entry)  # Append only valid entries
 
     return data
 
@@ -73,28 +94,3 @@ def tkv_to_df(data):
     df.set_index("timestamp", inplace=True)
 
     return df
-
-
-def write_tkv(file_path, data):
-    """
-    Writes a list of dictionaries to a TKV file.
-
-    Parameters:
-    - file_path (str): Path to the output TKV file.
-    - data (list of dict): List where each dictionary represents a line in the TKV file
-      with 'timestamp' as a key and other key-value pairs for each sensor.
-    """
-    with open(file_path, 'w') as file:
-        for entry in data:
-            # Extract the timestamp and ensure it is a string in ISO format
-            timestamp = entry.get("timestamp")
-            if isinstance(timestamp, (str, datetime.datetime)):
-                timestamp = timestamp.isoformat() if isinstance(timestamp, datetime.datetime) else timestamp
-            else:
-                raise ValueError("Each entry must contain a valid 'timestamp' in ISO format.")
-
-            # Build the sensor data as "key:value" pairs
-            sensor_data = " ; ".join(f"{key}:{value}" for key, value in entry.items() if key != "timestamp")
-
-            # Write the line in TKV format
-            file.write(f"{timestamp} ; {sensor_data}\n")
