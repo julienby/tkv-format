@@ -1,4 +1,4 @@
-# TKV Time Key Value -> tkv-format
+# TKV Time Key Value "tkv_format"
 
 ## Description
 
@@ -29,16 +29,6 @@ In this example:
 - `temperature`, `humidity`, and `pressure` are keys representing different sensors.
 - `22.5`, `45.0`, and `1013` are values associated with each sensor at the time of recording.
 
-## Project Structure
-
-```
-- TKV/
-    - src/                # Project source code
-        - parser.py       # Script to read and parse TKV files
-        - writer.py       # Script to generate and write TKV files
-    - README.md           # Project documentation
-```
-
 ## Installation
 
 Ensure you have **Python 3.8** or later. To install dependencies:
@@ -56,7 +46,7 @@ The `parser.py` script reads a TKV file and loads the data into a Python structu
 Example usage:
 
 ```python
-from src.parser import parse_tkv
+from tkv_format.parser import parse_tkv
 
 data = read_tkv("yourfile.tkv")
 print(data)
