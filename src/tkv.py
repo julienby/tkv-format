@@ -17,7 +17,7 @@ def read_tkv(file_path):
 
     with open(file_path, 'r') as file:
         for line in file:
-            # Remove any extra whitespace and split the line by ";"
+            # Remove any extra whitespace and split the line by " ; "
             parts = line.strip().split(" ; ")
 
             # First part is the timestamp
@@ -33,15 +33,29 @@ def read_tkv(file_path):
             # Parse each sensor:value pair
             for sensor_data in parts[1:]:
                 # Split each sensor data into key and value
-                key, value = sensor_data.split(":")
-                entry[key] = value
+                try:
+                    key, value = sensor_data.split(":")
+
+                    # Try to convert the value to float, if possible
+                    try:
+                        # Try converting to float if the value looks like a number
+                        value = float(value)
+                    except ValueError:
+                        # If it's not a number, leave the value as a string
+                        pass
+
+                    # Add the key and value to the entry dictionary
+                    entry[key] = value
+
+                except ValueError:
+                    raise ValueError(f"Invalid sensor data format: {sensor_data}")
 
             # Append the entry dictionary to the data list
             data.append(entry)
 
     return data
 
-def to_dataframe(data):
+def tkv_to_df(data):
     """
     Converts the list of dictionaries from read_tkv into a pandas DataFrame.
 
